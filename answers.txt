@@ -1,27 +1,31 @@
+# [Q1] But we dont use it here why? Why is it an array of 10 elements?
 # Answer 1: We use an array of 10 elements, known as one-hot encoding, because we are dealing with a categorical classification problem. 
 The loss function we use, Cross-Entropy Loss, is designed to work with probability distributions. 
 A one-hot encoded vector (e.g., [0, 0, 1, 0, ...]) represents the "true" probability distribution, where we are 100% certain of the correct class. 
 The model's output will be a predicted probability distribution (e.g., [0.1, 0.2, 0.6, ...]).
 Using a single number like '2' would treat the classes as having a numerical relationship, which is incorrect for distinct categories.
 
+# [Q2] Why convert to numpy array?
 # Answer 2: we use NumPy arrays as they provide:
 Efficient matrix operations essential for neural networks
 Vectorized operations that are much faster than Python lists
 Memory-efficient storage of numerical data
 Built-in mathematical functions needed for ML operations
 
-# Answer 3: This slicing
-Extracts the first channel from potentially multi-channel images
+# [Q3] Why are we doing this and what does this type of slicing result in?
+# Answer 3: This slicing extracts the first channel from potentially multi-channel images
 Converts RGB/RGBA images to grayscale by taking only one channel
 Results in a 3D array (n_samples, height, width) from a 4D array
 Ensures consistent grayscale format even if images were loaded as color
 
+# [Q4] Why are we reshaping the data?
 # Answer 4:  We Reshape from (n_samples, 28, 28) to (n_samples, 784) because
 Neural networks expect 1D input vectors, not 2D images
 Each image becomes a single row of 784 features
 This allows matrix multiplication with weight matrices
 This is standard practice for fully connected networks 
 
+[Q5] What is the learning rate?
 # Answer 5: The learning rate is
 A hyperparameter that controls the step size during gradient descent
 It determines how much weights are adjusted based on gradients
@@ -29,6 +33,7 @@ If it's too high: training may diverge or oscillate
 If it's too low: training becomes very slow
 Typical values are 0.001 to 0.1 for neural networks
 
+[Q6] Why are the dimensions of the weights and biases the way they are?
 # Answer 6: The dimensions of weight matrices are determined by the number of neurons in the two layers they connect.
 Weight matrix dimensions follow the following rules.
 Weights between layers  (neurons_in_next_layer, neurons_in_current_layer).
@@ -36,59 +41,72 @@ wih: (128, 784) to transform 784 inputs to 128 hidden neurons.
 who: (10, 128) to transform 128 hidden to 10 output neurons.
 This makes the to be output = W @ input + bias.
 
+[Q7] What is broadcasting and why do we need to broadcast the bias?
 # Answer 7: It is a NumPy feature that automatically expands arrays to compatible shapes allows operations on different but compatible shapes
 If bias has shape (n_neurons, 1) but gets added to (n_neurons, batch_size)
 Broadcasting repeats the bias vector "Stretching" for each sample in the batch
 Enables efficient batch processing without explicit loops
 
+[Q8] What is np.random.randn? What's the shape of this matrix?
 # Answer 8: `np.random.randn(d0, d1, ...)` generates an array of a given shape filled with random floating-point numbers,
  sampled from a standard normal (or Gaussian) distribution with a mean of 0 and a variance of 1.
- In the code `np.random.randn(hidden_neurons, input_neurons)`, the shape of the resulting weight matrix `wih` will be `(hidden_neurons, input_neurons)`.
+ In the code `np.random.randn(hidden_neurons, input_neurons)`, 
+ the shape of the resulting weight matrix `wih` will be `(hidden_neurons, input_neurons)`.
 
+# [Q9] What are activation functions and why do we need them?
 # Answer 9: Activation functions are non-linear functions applied to the output of each neuron. 
 They are crucial because without them, a neural network, no matter how many layers it has, would behave just like a single linear model. 
 The non-linearity introduced by activation functions allows the network to learn and approximate complex, non-linear relationships in the data.
 Enables networks to lear complex patterns.
 Like Softmax: converts logits to probabilities for classification.
 
+# [Q10] What is the softmax function and why do we need it?
 # Answer 10:The softmax function is an activation function typically used in the final layer of a multi-class classification network.
  It takes a vector of arbitrary real-valued scores (logits) and transforms them into a vector of values between 0 and 1 that sum to 1. 
  In essence, it converts the raw output scores into a probability distribution, where each value represents the model's predicted probability for a specific class.
 
+# [Q11] What are loss functions and why do we need them?
 # Answer 11: A loss function (or cost function) quantifies the error between the model's predicted output and the true target labels. 
 It provides a single scalar value that represents how well (or poorly) the model is performing. 
 The entire training process is aimed at minimizing this loss value by adjusting the network's weights and biases through optimization algorithms like gradient descent.
 
+[Q12] What does the output choice we have here mean? It's an array of 10 elements per image, but why?
 # Answer 12:The 10-element array is the output of the softmax function. 
 Each element in the array corresponds to one of the 10 fashion classes. 
 The value of the i-th element represents the model's confidence or predicted probability that the input image belongs to class i.
  The class with the highest probability is the model's final prediction.
 
+# [Q13] Why are we subtracting the mean of the inputs?
 # Answer 13: Subtracting the mean from the input data is a form of data normalization called "centering." 
 It shifts the data so that it has a mean of zero. 
 This practice can help the gradient descent algorithm converge faster and more reliably during training,
 as it prevents the gradients from being skewed in a particular direction.
 It is a standard proccessing step for nenural networks
 
+# [Q14] Why are we using the softmax function here?
 # Answer 14: We use the softmax function in the final layer because this is a multi-class classification problem.
  We want the network to output a probability distribution across the 10 possible classes, 
  making it easy to interpret the results and use a suitable loss function like Cross-Entropy.
  Ensures the values are positive and sums to 1 
 
+# [Q15] Why are we doing a forward pass here instead of just using the outputs from the forward function?
 # Answer 15: We must perform a forward pass *inside* the `backprop` function because backpropagation requires not only the final output but,
  also all the intermediate values calculated during the forward pass (e.g., `hidden_inputs`, `hidden_outputs`). 
  These intermediate values are essential for calculating the local gradients at each layer using the chain rule.
  A separate `forward()` call would only give us the final prediction, not the necessary intermediate states.
 
+[Q16] What is the validation dataset and what do we mean by generalization?
 # Answer 16: The validation dataset is a subset of the training data that is held out and not used for updating the model's weights. 
 It is used during training to monitor the model's performance on unseen data. 
 Generalization refers to the model's ability to perform accurately on new, unseen data that it was not trained on. 
 By tracking the validation loss, we can check for overfitting (when the model performs well on training data but poorly on validation data) and assess its generalization ability.
 
+# [Q17] What are the parameters in the model and what do they mean?
 # Answer 17: The parameters of a neural network are the values that are learned during the training process. 
 In our model, these are the weights (`wih`, `who`) and biases (`bih`, `bho`). They define the transformations that the network applies to the data. 
 In contrast, hyperparameters (like learning rate, number of epochs, number of hidden neurons) are settings that are chosen before training and define the model's architecture and how it is trained.
 
+# [Q18] Why are we using argmax here? Why is this output different from the output of the model?
 # Answer 18: Argmax is used to convert probability distribution to single class prediction.
 The models gives us 10 numbers for each image denoting it's probabilites but since we just want ot output the class of the image,
 argmax finds the index of the biggest number and give us the final answer.
